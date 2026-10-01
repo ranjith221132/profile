@@ -1,7 +1,56 @@
 // Interactive Javascript for Ranjith Pachamuthu Portfolio
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Mobile Menu Toggle
+  // 1. 3D Perspective Tilt on Mouse Movement for Avatar Card
+  const avatarWrapper = document.getElementById('avatar-3d-wrapper');
+  const tiltCard = document.getElementById('avatar-tilt-card');
+
+  if (avatarWrapper && tiltCard) {
+    avatarWrapper.addEventListener('mousemove', (e) => {
+      const rect = avatarWrapper.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = ((y - centerY) / centerY) * -12; // tilt angle
+      const rotateY = ((x - centerX) / centerX) * 12;
+
+      tiltCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+      tiltCard.style.boxShadow = `${-rotateY * 2}px ${rotateX * 2 + 15}px 30px rgba(6, 182, 212, 0.2)`;
+    });
+
+    avatarWrapper.addEventListener('mouseleave', () => {
+      tiltCard.style.transform = 'rotateX(0deg) rotateY(0deg) translateY(0px)';
+      tiltCard.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.5)';
+    });
+  }
+
+  // 2. Toggle between 2.5D Vector Art and Real Photo
+  const toggleBtn = document.getElementById('avatar-toggle-btn');
+  const toggleText = document.getElementById('avatar-toggle-text');
+  const vectorImg = document.getElementById('avatar-img-vector');
+  const photoImg = document.getElementById('avatar-img-photo');
+
+  let showingVector = true;
+
+  if (toggleBtn && vectorImg && photoImg) {
+    toggleBtn.addEventListener('click', () => {
+      showingVector = !showingVector;
+      if (showingVector) {
+        vectorImg.classList.remove('hidden');
+        photoImg.classList.add('hidden');
+        if (toggleText) toggleText.textContent = 'Show Real Photo';
+      } else {
+        vectorImg.classList.add('hidden');
+        photoImg.classList.remove('hidden');
+        if (toggleText) toggleText.textContent = 'Show 2.5D Vector';
+      }
+    });
+  }
+
+  // 3. Mobile Menu Toggle
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
   const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
@@ -18,14 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 2. Project Category Filtering
+  // 4. Project Category Filtering
   const filterBtns = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('.project-card');
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => {
-        b.classList.remove('active', 'text-slate-950', 'bg-gradient-to-r', 'from-cyan-500', 'to-indigo-500');
+        b.classList.remove('active');
         b.classList.add('text-slate-400');
       });
 
@@ -40,9 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
           card.style.display = 'flex';
           card.style.opacity = '0';
           setTimeout(() => {
-            card.style.transition = 'opacity 0.3s ease';
+            card.style.transition = 'opacity 0.25s ease';
             card.style.opacity = '1';
-          }, 50);
+          }, 30);
         } else {
           card.style.display = 'none';
         }
@@ -50,10 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Copy Email to Clipboard
+  // 5. Copy Email to Clipboard
   const copyBtn = document.getElementById('copy-email-btn');
   const copyBtnText = document.getElementById('copy-btn-text');
-  const copyIcon = document.getElementById('copy-icon');
   const toast = document.getElementById('toast');
   const emailToCopy = 'ranjithpachamuthu003@gmail.com';
 
@@ -72,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }, 3000);
         }
       } catch (err) {
-        // Fallback for older browsers
         const textarea = document.createElement('textarea');
         textarea.value = emailToCopy;
         document.body.appendChild(textarea);
@@ -87,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4. Subtle Neural / Stream Network Canvas Background
+  // 6. Neural Stream Particle Canvas Background
   const canvas = document.getElementById('bg-canvas');
   if (canvas) {
     const ctx = canvas.getContext('2d');
@@ -100,15 +147,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const particles = [];
-    const particleCount = Math.min(Math.floor((width * height) / 25000), 50);
+    const particleCount = Math.min(Math.floor((width * height) / 28000), 45);
 
     class Particle {
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.4;
-        this.vy = (Math.random() - 0.5) * 0.4;
-        this.radius = Math.random() * 1.5 + 0.8;
+        this.vx = (Math.random() - 0.5) * 0.35;
+        this.vy = (Math.random() - 0.5) * 0.35;
+        this.radius = Math.random() * 1.4 + 0.6;
       }
 
       update() {
@@ -143,12 +190,12 @@ document.addEventListener('DOMContentLoaded', () => {
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 130) {
+          if (dist < 120) {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(56, 189, 248, ${0.12 * (1 - dist / 130)})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(56, 189, 248, ${0.1 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
